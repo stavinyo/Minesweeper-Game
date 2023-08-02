@@ -8,23 +8,29 @@
 
 </head>
 <body onload="onInit()">
-    <header>Sprint & Project 1 - Stav Cohen</header>
+           
+        <div class = 'board-game'>
 
-        <div class ='board-game'>
-        
-        <div class = 'btns'>
-            <button class="btn btn1" >Small 4X4</button>
-            <button class="btn btn2">Medium 8X8 </button>
-            <button class="btn btn3" on>Large 12X12</button>
+            <div class="btn-levels">
 
-        <h3 >TIME:</h3>
-        <h2 class = 'time'></h2>
+                <button class="life life1" onclick="useLife(1)">❤️</button>
+                <button class="life life2" onclick="useLife(2)">❤️</button>
+                <button class="life life3" onclick="useLife(3)">❤️</button>
 
+                <button class="btn btn1" onclick="chooseLevel(4, 2)">Small 4X4</button>
+                <button class="btn btn2" onclick="chooseLevel(8, 14)">Medium 8X8 </button>
+                <button class="btn btn3" onclick="chooseLevel(12, 32)">Large 12X12</button>
 
-        <table class = 'board'></table>
+                <h2 class = 'time'>000</h2>
+            </div>
 
-    </div>
-    <script src="js/index.js"></script>
-    <script src="js/utils.js"></script>
+            
+            <table class = 'board'></table>
+            
+        </div>
+
+        <footer>Sprint & Project 1 - Stav Cohen</footer>
+        <script src="js/index.js"></script>
+        <script src="js/utils.js"></script>
 </body>
 </html>

@@ -6,6 +6,7 @@
     margin: 40px;
     padding: 4%;
     border: solid;
+    text-align: center;
 }
 
 table {
@@ -25,4 +26,24 @@ table, td {
     text-align: center;
     transition: 0.5s;
     padding: 2px;
+}
+
+.cell{
+    background-color: rgb(179, 175, 175);
+    border-color: aliceblue;
+}
+
+.mark{
+        background-color: rgb(132, 128, 128);
+        border-color: rgb(95, 93, 93);
+        cursor: not-allowed;
+
+}
+
+footer{
+    text-align: center;
+}
+
+.hidden{
+    display: none;
 }
