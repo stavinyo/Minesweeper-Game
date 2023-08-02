@@ -1,7 +1,22 @@
 'use strict'
+
+////////////////////////////////////////////////////////////////////////////
+// TODO: לתקן את הניצחון
+// TODO: gGame לתקן את הספירות של
+// TODO: לתקן לבבות
+// TODO: לתקן לבבות לשחקן 4 על 4
+// TODO: לתקן שעון
+// TODO: לבדוק The first clicked cell is never a mine
+// TODO: לבדוק רקורסיה
+// TODO: לתקן פונקציות לא טובות ומסורבלות
+////////////////////////////////////////////////////////////////////////////
+
 const BOMB = '💣'
 const EMPTY = ''
 const FLAG = '🚩'
+const NORMAL = '😁'
+const LOSE = '🤯'
+const WIN = '😎'
 
 var gBoard
 var gLife = 3
@@ -22,23 +37,34 @@ var gGame = {
     secsPassed: 0
 }
 
-function chooseLevel(size, mines) {
-    gGame.isOn = true
-    gIsFirstClick = true
-    clearInterval(gTimerIntervalId)
-    document.querySelector('.time').innerText = '000'
-    gTimerIntervalId = 0
-
-    gLevel.SIZE = size
-    gLevel.MINES = mines
-
-    onInit()
-}
-
 function onInit() {
     gBoard = createBoard()
     // console.table(gBoard)
     renderBoard(gBoard)
+}
+
+function chooseLevel(size, mines) {
+    gLevel.SIZE = size
+    gLevel.MINES = mines
+    restart()
+}
+
+function restart() {
+    gGame.isOn = true
+    gIsFirstClick = true
+    gLife = 3
+    gTime = 0
+    gIsFirstClick = true
+
+    document.querySelector('.life1').classList.remove('hidden')
+    document.querySelector('.life2').classList.remove('hidden')
+    document.querySelector('.life3').classList.remove('hidden')
+    document.querySelector('.restart').innerText = NORMAL
+
+    document.querySelector('.time').innerText = '000'
+    clearInterval(gTimerIntervalId)
+    gTimerIntervalId = 0
+    onInit()
 }
 
 function createBoard() {
@@ -84,8 +110,6 @@ function renderBoard(board) {
 }
 
 function createRandomBombs(board, locationBombBoard) {
-
-
     for (var i = 0; i < gLevel.MINES; i++) {
         var tempPos = getRandomIntInclusive(0, locationBombBoard.length - 1)
         // console.log('tempPos', tempPos)
@@ -105,12 +129,14 @@ function createRandomBombs(board, locationBombBoard) {
 
 function onCellClicked(elCell, rowIdx, colIdx) {
     if (gGame.isOn === false) return
+    if (gBoard[rowIdx][colIdx].isShown) return
+    console.log("stavstavstav")
 
     const cell = gBoard[rowIdx][colIdx]
     console.log("showwwwww", gGame.shownCount)
-    if (cell.isMine) {
+    if (cell.isMine && gLife !== 0) {
         elCell.innerText = BOMB
-        gGame.isOn = false
+        cell.isShown = true
         return checkGameOver(gBoard, rowIdx, colIdx)
     }
 
@@ -214,33 +240,34 @@ function onCellMarked(elCell, event) {
 }
 
 function checkGameOver(gBoard, rowIdx, colIdx) {
-
-    // console.log("gGame.markedCount", gGame.markedCount)
-    // console.log("gLevel.MINES", gLevel.MINES)
-
-    // console.log("gGame.shownCount", gGame.shownCount)
-    // console.log("gLevel.SIZE ** 2 - gLevel.MINES", gLevel.SIZE ** 2 - gLevel.MINES)
-    console.log("gBoard[rowIdx][colIdx].isMine", gBoard[rowIdx][colIdx])
-    if (gBoard[rowIdx][colIdx].isMine) {
-        console.log('Game Over!!!')
-        clearInterval(gTimerIntervalId)
-
-        // setTimeout(() => {
-        //     for (var i = 0; i < gBoard.length; i++) {
-        //         for (var j = 0; j < gBoard[i].length; j++) {
-        //             var elCellBomb = document.querySelector(`[data-i="${i}"][data-j="${j}"]`)
-        //             elCellBomb.classList.remove('mark')
-        //             // gBoard[i][j].isMine
-        //             elCellBomb.innerText = '💥'
-        //         }
-        //     }
-        // }, 1000);
-        // return
+    if ((gGame.markedCount <= gLevel.MINES) && (gGame.shownCount === (gLevel.SIZE ** 2 - gLevel.MINES))) {
+        console.log("win")
+        document.querySelector('.restart').innerText = WIN
+        return
     }
 
-    if ((gGame.markedCount === gLevel.MINES) && (gGame.shownCount === (gLevel.SIZE ** 2 - gLevel.MINES)))
-        console.log("win")
-    return
+    if (gBoard[rowIdx][colIdx].isMine) {
+        useLife(gLife)
+        console.log("gLife", gLife)
+        if (gLife === 0) {
+            console.log('Game Over!!!')
+            clearInterval(gTimerIntervalId)
+            gGame.isOn = false
+            document.querySelector('.restart').innerText = LOSE
+
+            setTimeout(() => {
+                for (var i = 0; i < gBoard.length; i++) {
+                    for (var j = 0; j < gBoard[i].length; j++) {
+                        var elCellBomb = document.querySelector(`[data-i="${i}"][data-j="${j}"]`)
+
+                        elCellBomb.classList.remove('mark')
+                        elCellBomb.innerText = '💥'
+                    }
+                }
+            }, 1000);
+            return
+        }
+    }
 }
 
 function startTimer() {
@@ -253,12 +280,10 @@ function startTimer() {
     }, 1000)
 }
 
-
 function useLife(i) {
-    var elLife = document.querySelector(`life${i}`)
-
+    var elLife = document.querySelector(`.life${i}`)
     console.log(elLife)
     elLife.classList.add('hidden')
     gLife--
-
 }
+
