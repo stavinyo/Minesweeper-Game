@@ -1,0 +1,28 @@
+*{
+    box-sizing: border-box;
+}
+
+.board-game{
+    margin: 40px;
+    padding: 4%;
+    border: solid;
+}
+
+table {
+    margin: 0 auto;
+}
+
+table, td {
+
+    border: 1px solid black;
+    cursor: pointer;
+    border-collapse: collapse;
+}
+
+.board td {
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    transition: 0.5s;
+    padding: 2px;
+}
