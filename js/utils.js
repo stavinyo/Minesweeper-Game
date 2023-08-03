@@ -15,9 +15,6 @@ function createMat(rowIdx, colIdx) {
 }
 
 
-
-
-
 function getEmptyCells(board) {
     var emptyCells = [];
     for (var i = 0; i < board.length; i++) {
@@ -39,13 +36,7 @@ function getEmptyCells(board) {
 // --> Renders into an already made board in the HTML
 
 
-// --> location such as: {i: 2, j: 7}
-function renderCell(location, value) {
 
-    // Select the elCell and set the value
-    const elCell = document.querySelector(`.cell-${location.i}-${location.j}`)
-    elCell.innerHTML = value
-}
 
 
 
