@@ -19,7 +19,7 @@ var gBombLeftCounter
 var locationBombBoard
 var gIsWin = false
 var gTimeGame = 0
-var gLevelName
+var gLevelName = 'easy'
 var gHint = false
 var gLevel = {
     SIZE: 4,
