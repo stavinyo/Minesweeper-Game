@@ -5,7 +5,7 @@
 }
 
 body {
- background-image: url("../img/wp2894552-bomb-wallpaper.jpg");
+ background-image: url("/img/wp2894552-bomb-wallpaper.jpg");
  /* background-color: #cccccc; */
 }
 
@@ -130,3 +130,11 @@ footer{
     text-align: center;
 }
 
+.best-score-title{
+    text-align: center;
+}
+
+#best-score{
+    color: rgb(72, 3, 3);
+    font-size: 20px;
+}

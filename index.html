@@ -17,26 +17,27 @@
     <h1 class = "title">💥 Minesweeper 💥</h1>
     
     <div class ="board-game">
-        <!-- <div class="btns"> -->
+
             <div class="btn-levels">
-                <button class="btn btn1" onclick="chooseLevel(4, 2)">Easy</button>
-                <button class="btn btn2" onclick="chooseLevel(8, 14)">Hard</button>
-                <button class="btn btn3" onclick="chooseLevel(12, 32)">Experts</button>
+                <button class="btn btn1" onclick="chooseLevel(4, 2, 'easy')">Easy</button>
+                <button class="btn btn2" onclick="chooseLevel(8, 14, 'hard')">Hard</button>
+                <button class="btn btn3" onclick="chooseLevel(12, 32, 'expert')">Expert</button>
+                
+                <button class="btn hint" onclick="useHint()">Hint</button>
             </div>
+
+
 
             <button class="restart" onclick="restart()">😁</button>
             
-            <div class ="life-container">
-                <div class="life life1">❤️</div>
-                <div class="life life2">❤️</div>
-                <div class="life life3">❤️</div>
-            </div>
+            <div class ="life-container"></div>
 
             <h2 class = 'bomb-left'>💣<span class="span-bomb-left">00</span></h2>
             <h2 class = 'time'>⏱️<span class="span-time">0</span></h2>
-        <!-- </div> -->
+
             
         <table class = 'board'></table>
+    <h4 class="best-score-title">Your Best Score: <span id="best-score"></span> sec</h4>
             
     </div>
 
