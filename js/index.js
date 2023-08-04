@@ -20,7 +20,7 @@ var locationBombBoard
 var gIsWin = false
 var gTimeGame = 0
 var gLevelName
-
+var gHint = false
 var gLevel = {
     SIZE: 4,
     MINES: 2
@@ -136,25 +136,34 @@ function onCellClicked(elCell, rowIdx, colIdx) {
     if (!gGame.isOn) return
     if (currCell.isShown) return
     if (currCell.isMarked) return
+    if (gHint) {
+        showHints(elCell, gBoard, rowIdx, colIdx)
+        return
+    }
 
-    // if (currCell.isMine && gLife !== 0) {
-    if (currCell.isMine) {
+    checkIsMine(elCell, rowIdx, colIdx)
+    const countAround = setMinesNegsCount(gBoard, rowIdx, colIdx)
+    putNumberInCell(currCell, countAround, elCell, rowIdx, colIdx)
+    checkRenderedBombs(rowIdx, colIdx)
+
+    console.table(gBoard)
+}
+
+function checkIsMine(elCell, rowIdx, colIdx) {
+    if (gBoard[rowIdx][colIdx].isMine) {
         elCell.innerText = BOMB
-        // currCell.isShown = true
+
         countShownCount(gBoard, rowIdx, colIdx)
         return checkGameOver(gBoard, rowIdx, colIdx)
     }
+}
 
-    const countAround = setMinesNegsCount(gBoard, rowIdx, colIdx)
-
+function putNumberInCell(currCell, countAround, elCell, rowIdx, colIdx) {
     if (!currCell.isMine && (!currCell.isShown || currCell.isMarked)) {
         elCell.innerText = countAround === 0 ? '' : countAround
         currCell.minesAroundCount = countAround
         countShownCount(gBoard, rowIdx, colIdx)
-        // gGame.shownCount++
         elCell.classList.add('mark')
-
-        console.log("gGame.shownCount", gGame.shownCount)
 
         if (countAround === 0 || gIsFirstClick) {
             expandShown(gBoard, rowIdx, colIdx)
@@ -165,7 +174,9 @@ function onCellClicked(elCell, rowIdx, colIdx) {
         }
         checkGameOver(gBoard, rowIdx, colIdx)
     }
+}
 
+function checkRenderedBombs(rowIdx, colIdx) {
     if (!gIsRenderedBombs) {
         createRandomBombs(gBoard, locationBombBoard)
         gIsRenderedBombs = true
@@ -239,8 +250,6 @@ function expandShown(board, rowIdx, colIdx) {
                 elCell.innerText = countAround === 0 ? '' : countAround
                 elCell.classList.add('mark')
                 countShownCount(gBoard, i, j)
-                // board[i][j].isShown = true
-                // gGame.shownCount++
             }
         }
     }
@@ -374,10 +383,6 @@ function countShownCount(board, i, j) {
 }
 
 function bestScore() {
-    // console.log(localStorage.getItem("bestscore-easy"))
-
-    // console.log((localStorage.getItem(`bestscore-${gLevelName}`) < gTimeGame))
-    // if ((localStorage.getItem(`bestscore-${gLevelName}`) < gTimeGame) || !gIsWin) return
 
     const bestScore = parseInt(localStorage.getItem(`bestscore-${gLevelName}`), 10);
 
@@ -392,6 +397,75 @@ function bestScore() {
     }
 }
 
+//-----------------------HINTS--------------------------//
 function useHint() {
-
+    gHint = true
+    console.table(gBoard)
 }
+
+function showHints(elCell, gBoard, rowIdx, colIdx) {
+    var currCell = gBoard[rowIdx][colIdx]
+    if (gBoard[rowIdx][colIdx].isMine) {
+        elCell.innerText = BOMB
+        // elCell.classList.add('hint-back')
+        showHint(elCell, gBoard, rowIdx, colIdx)
+    }
+
+    const countAround = setMinesNegsCount(gBoard, rowIdx, colIdx)
+    putNumberInCellHint(currCell, countAround, elCell, rowIdx, colIdx)
+
+    console.table(gBoard)
+    gHint = false
+}
+
+function putNumberInCellHint(currCell, countAround, elCell, rowIdx, colIdx) {
+    if (currCell.isMine) elCell.innerText = BOMB
+    else {
+        elCell.innerText = countAround === 0 ? '' : countAround
+        currCell.minesAroundCount = countAround
+    }
+    // elCell.classList.add('hint-back')
+    showHint(elCell, gBoard, rowIdx, colIdx)
+    expandShownHint(gBoard, rowIdx, colIdx)
+}
+
+function expandShownHint(board, rowIdx, colIdx) {
+
+    for (var i = rowIdx - 1; i <= rowIdx + 1; i++) {
+        if (i < 0 || i >= board.length) continue
+
+        for (var j = colIdx - 1; j <= colIdx + 1; j++) {
+            if (i === rowIdx && j === colIdx) continue
+            if (j < 0 || j >= board[0].length) continue
+
+            board[i][j].minesAroundCount = setMinesNegsCount(board, i, j)
+            var elCell = document.querySelector(`[data-i="${i}"][data-j="${j}"]`)
+
+            var countAround = board[i][j].minesAroundCount
+
+            if (board[i][j].isMine) elCell.innerText = BOMB
+            else {
+                elCell.innerText = countAround === 0 ? '' : countAround
+                board[i][j].minesAroundCount = countAround
+            }
+            // elCell.classList.add('hint-back')
+            showHint(elCell, board, i, j)
+        }
+    }
+}
+
+function showHint(elCell, board, rowIdx, colIdx) {
+
+    elCell.classList.add('hint-back')
+
+    setTimeout(() => {
+        elCell.classList.remove('hint-back')
+        var currCell = board[rowIdx][colIdx]
+
+        if (currCell.isShown || currCell.isMarked) return
+        elCell.innerText = ''
+
+    }, 1500);
+}
+//---------------------------------------------------------------------//
+
