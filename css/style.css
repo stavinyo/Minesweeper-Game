@@ -5,7 +5,7 @@
 }
 
 body {
-background-image: url("/img/wp2894552-bomb-wallpaper.jpg");
+background-image: url("../img/wp2894552-bomb-wallpaper.jpg");
   min-height: 100vh;
   display: flex;
   flex-direction: column;
