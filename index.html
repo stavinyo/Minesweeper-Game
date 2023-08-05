@@ -9,8 +9,8 @@
     <link rel="icon" href="img/bomb-favicon.ico">
     <link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Ubuntu&display=swap" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Shadows+Into+Light&family=Ubuntu&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Shadows+Into+Light&family=Ubuntu&display=swap" rel="stylesheet">
     <title>Minesweeper - Stav Cohen</title>
     
 </head>
@@ -18,31 +18,35 @@
     <h1 class = "title">💥 Minesweeper 💥</h1>
     
     <div class ="board-game">
-
-            <div class="btn-levels">
+        <div class="container">
+            <div class="box">
                 <button class="btn btn1" onclick="chooseLevel(4, 2, 'easy')">Easy</button>
                 <button class="btn btn2" onclick="chooseLevel(8, 14, 'hard')">Hard</button>
                 <button class="btn btn3" onclick="chooseLevel(12, 32, 'expert')">Expert</button>
                 
-                <button class="btn hint" onclick="useHint(this)">Hint</button>
+                <button class="btn hint" onclick="useHint()">Hint</button>
+                <button class="btn safe-cell" onclick="showSafeCell()">Safe Cell</button>
+
+                <button class="btn manual" onclick="ManualBombPlacement()">Manual</button>
             </div>
 
-
-
-            <button class="restart" onclick="restart()">😁</button>
+            <div class="box">
+                <button class="restart" onclick="restart()">😁</button>
+                <div class ="life-container"></div>
+            </div>
             
-            <div class ="life-container"></div>
-
-            <h2 class = 'bomb-left'>💣<span class="span-bomb-left">00</span></h2>
-            <h2 class = 'time'>⏱️<span class="span-time">0</span></h2>
-
+            <div class="box">
+                <h2 class = 'bomb-left'>💣<span class="span-bomb-left">00</span></h2>
+                <h2 class = 'time'>⏱️<span class="span-time">0</span></h2>
+            </div>
+        </div>
             
         <table class = 'board'></table>
-    <h4 class="best-score-title">Your Best Score: <span id="best-score"></span> sec</h4>
+    <h4 class="best-score-title">Your Best Score: <span id="best-score"></span></h4>
             
     </div>
 
-    <footer>Sprint & Project 1 - © Stav Cohen </footer>
+    <footer>Minesweeper Project - © Stav Cohen</footer>
     <script src="js/index.js"></script>
     <script src="js/utils.js"></script>
 </body>

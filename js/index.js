@@ -6,6 +6,8 @@ const FLAG = '🚩'
 const NORMAL = '😁'
 const LOSE = '🤯'
 const WIN = '😎'
+const LIFE = 3
+const MIN_MINES = 2
 
 var gBoard
 var gLife = 0
@@ -16,11 +18,17 @@ var gIsRenderedBombs = false
 var gTimerIntervalId = 0
 var gStartTime
 var gBombLeftCounter
-var locationBombBoard
+var gEmptyCellsIndex
 var gIsWin = false
 var gTimeGame = 0
 var gLevelName = 'easy'
 var gHint = false
+var gSaveCell = false
+
+var gManualBombPlacement = false
+var countManualClicked = 0
+var gCounterMoves = 0
+
 var gLevel = {
     SIZE: 4,
     MINES: 2
@@ -39,6 +47,7 @@ function onInit() {
     gBombLeftCounter = gLevel.MINES
     document.querySelector('.bomb-left .span-bomb-left').innerText = gBombLeftCounter
     document.getElementById("best-score").innerHTML = localStorage.getItem(`bestscore-${gLevelName}`)
+    // fenderHint()
 }
 
 function chooseLevel(size, mines, level) {
@@ -52,16 +61,22 @@ function restart() {
     gGame.isOn = true
     gIsFirstClick = true
     gIsRenderedBombs = false
-    gIsLifeNeeded = gLevel.MINES !== 2 ? true : false
-    gLife = gIsLifeNeeded ? 3 : 0
+    gIsLifeNeeded = gLevel.MINES !== MIN_MINES ? true : false
+    gLife = gIsLifeNeeded ? LIFE : 0
     gTime = 0
     gIsWin = false
+    gSaveCell = false
+    gHint = false
     gGame.markedCount = 0
     gGame.shownCount = 0
+    gManualBombPlacement = false
+    countManualClicked = 0
+    gCounterMoves = 0
 
     renderLife()
     document.querySelector('.restart').innerText = NORMAL
-
+    document.querySelector('.manual').classList.remove('btn-off')
+    document.querySelector('.safe-cell').classList.remove('btn-off')
     document.querySelector('.time .span-time').innerText = '0'
     clearInterval(gTimerIntervalId)
     gTimerIntervalId = 0
@@ -70,7 +85,7 @@ function restart() {
 
 function createBoard() {
     const board = []
-    locationBombBoard = []
+    gEmptyCellsIndex = []
 
     for (var i = 0; i < gLevel.SIZE; i++) {
         board[i] = []
@@ -82,7 +97,7 @@ function createBoard() {
                 isMine: false,
                 isMarked: false
             }
-            locationBombBoard.push({ i, j })
+            gEmptyCellsIndex.push({ i, j })
         }
     }
     return board
@@ -106,13 +121,13 @@ function renderBoard(board) {
     elBoard.innerHTML = strHTML
 }
 
-function createRandomBombs(board, locationBombBoard) {
+function createRandomBombs(board, gEmptyCellsIndex) {
     var countLocation = 0
     for (var i = 0; i < board.length; i++) {
         for (var j = 0; j < board[i].length; j++) {
 
             if (board[i][j].isShown) {
-                locationBombBoard.splice(countLocation, 1)
+                gEmptyCellsIndex.splice(countLocation, 1)
                 countLocation--
             }
             countLocation++
@@ -120,27 +135,38 @@ function createRandomBombs(board, locationBombBoard) {
     }
 
     for (var i = 0; i < gLevel.MINES; i++) {
-        var tempPos = getRandomIntInclusive(0, locationBombBoard.length - 1)
+        var tempPos = getRandomIntInclusive(0, gEmptyCellsIndex.length - 1)
 
-        var randRowIdx = locationBombBoard[tempPos].i
-        var randColIdx = locationBombBoard[tempPos].j
+        var randRowIdx = gEmptyCellsIndex[tempPos].i
+        var randColIdx = gEmptyCellsIndex[tempPos].j
 
         board[randRowIdx][randColIdx].isMine = true
-        locationBombBoard.splice(tempPos, 1)
+        gEmptyCellsIndex.splice(tempPos, 1)
     }
 }
 
+
 function onCellClicked(elCell, rowIdx, colIdx) {
     const currCell = gBoard[rowIdx][colIdx]
+    if (gManualBombPlacement) {
+        if (currCell.isMine === true) return
+        document.querySelector('.span-bomb-left').innerText = ++gBombLeftCounter
+        currCell.isMine = true
+        return
+    }
 
     if (!gGame.isOn) return
     if (currCell.isShown) return
     if (currCell.isMarked) return
+
+
     if (gHint) {
         showHints(elCell, gBoard, rowIdx, colIdx)
+        // showHints(rowIdx, colIdx)
         return
     }
-
+    gCounterMoves++
+    document.querySelector(".manual").classList.add('btn-off')
     checkIsMine(elCell, rowIdx, colIdx)
     const countAround = setMinesNegsCount(gBoard, rowIdx, colIdx)
     putNumberInCell(currCell, countAround, elCell, rowIdx, colIdx)
@@ -159,11 +185,16 @@ function checkIsMine(elCell, rowIdx, colIdx) {
 }
 
 function putNumberInCell(currCell, countAround, elCell, rowIdx, colIdx) {
+    if (currCell.isMine) {
+        elCell.innerText = BOMB
+        return
+    }
     if (!currCell.isMine && (!currCell.isShown || currCell.isMarked)) {
         elCell.innerText = countAround === 0 ? '' : countAround
         currCell.minesAroundCount = countAround
         countShownCount(gBoard, rowIdx, colIdx)
         elCell.classList.add('mark')
+        gEmptyCellsIndex.splice()
 
         if (countAround === 0 || gIsFirstClick) {
             expandShown(gBoard, rowIdx, colIdx)
@@ -177,8 +208,14 @@ function putNumberInCell(currCell, countAround, elCell, rowIdx, colIdx) {
 }
 
 function checkRenderedBombs(rowIdx, colIdx) {
+    if (!gManualBombPlacement && countManualClicked === 2) {
+        gIsRenderedBombs = true
+        if (gBoard[rowIdx][colIdx].isMine) return
+        return expandShownRecursive(gBoard, rowIdx, colIdx)
+    }
+
     if (!gIsRenderedBombs) {
-        createRandomBombs(gBoard, locationBombBoard)
+        createRandomBombs(gBoard, gEmptyCellsIndex)
         gIsRenderedBombs = true
         expandShownRecursive(gBoard, rowIdx, colIdx)
     }
@@ -288,7 +325,6 @@ function checkGameOver(gBoard, rowIdx, colIdx) {
     if (currCell.isMine && currCell.isShown && !currCell.isMarked) {
         if (gIsLifeNeeded) useLife(gLife)
         bombLeftCounter()
-        console.log("gLife", gLife)
         if (gLife === 0) {
             gameOver()
         }
@@ -342,7 +378,7 @@ function startTimer() {
         var elTimer = document.querySelector('.time .span-time')
 
         gTimeGame = (delta / 1000).toFixed(3)
-        elTimer.innerText = `${gTimeGame} sec`
+        elTimer.innerText = `${gTimeGame}`
     }, 37)
 
 
@@ -351,11 +387,6 @@ function startTimer() {
 function useLife(isPositive = true) {
     if (isPositive) gLife--
     if (!isPositive) gLife++
-
-    console.log("gLife", gLife)
-    console.log("gGame.markedCount", gGame.markedCount)
-    console.log("gGame.shownCount", gGame.shownCount)
-
     renderLife()
 }
 
@@ -366,10 +397,6 @@ function renderLife() {
 function bombLeftCounter(isPositive = true) {
     if (isPositive) gBombLeftCounter--
     if (!isPositive) gBombLeftCounter++
-
-    console.log("gGame.shownCount", gGame.shownCount)
-    console.log("gGame.markedCount", gGame.markedCount)
-    console.log("gBombLeftCounter", gBombLeftCounter)
     document.querySelector('.bomb-left .span-bomb-left').innerText = gBombLeftCounter
 }
 
@@ -382,25 +409,35 @@ function countShownCount(board, i, j) {
     currCell.isShown = true
 }
 
+
+
+
+//-----------------------Local Storage-------------------//
 function bestScore() {
 
     const bestScore = parseInt(localStorage.getItem(`bestscore-${gLevelName}`), 10);
-
-    console.log("bestScore", bestScore)
+    // const bestScore = localStorage.getItem(`bestscore-${gLevelName}`)
     if (bestScore < gTimeGame || !gIsWin) return;
-
     if (typeof (Storage) !== "undefined") {
-        localStorage.setItem(`bestscore-${gLevelName}`, gTimeGame + '');
+        localStorage.setItem(`bestscore-${gLevelName}`, gTimeGame);
         document.getElementById("best-score").innerHTML = localStorage.getItem(`bestscore-${gLevelName}`);
     } else {
         console.log("no local storage work's")
     }
 }
+//---------------------------------------------------------//
+
+
+
+
 
 //-----------------------HINTS--------------------------//
 function useHint() {
+    if (gIsFirstClick) {
+        alert("This option is only available after your first click")
+        return
+    }
     gHint = true
-    console.table(gBoard)
 }
 
 function showHints(elCell, gBoard, rowIdx, colIdx) {
@@ -462,10 +499,65 @@ function showHint(elCell, board, rowIdx, colIdx) {
         elCell.classList.remove('hint-back')
         var currCell = board[rowIdx][colIdx]
 
-        if (currCell.isShown || currCell.isMarked) return
-        elCell.innerText = ''
+        if (currCell.isShown && currCell.isMine)
+            elCell.innerText = BOMB
+        else if (currCell.isMarked)
+            elCell.innerText = FLAG
+        else if (!currCell.isShown)
+            elCell.innerText = EMPTY
+        // if (currCell.isShown || currCell.isMarked) return
 
-    }, 1500);
+
+    }, 1000);
 }
 //---------------------------------------------------------------------//
 
+
+
+
+//--------------------------SAFE CELL----------------------------------//
+function showSafeCell() {
+    if (gSaveCell || gIsFirstClick) {
+        return
+    }
+
+    var randIdx = getRandomIntInclusive(0, gEmptyCellsIndex.length - 1)
+    var rowIdx = gEmptyCellsIndex[randIdx].i
+    var colIdx = gEmptyCellsIndex[randIdx].j
+
+    while (gBoard[rowIdx][colIdx].isMine || gBoard[rowIdx][colIdx].isShown) {
+        randIdx = getRandomIntInclusive(0, gEmptyCellsIndex.length - 1)
+        rowIdx = gEmptyCellsIndex[randIdx].i
+        colIdx = gEmptyCellsIndex[randIdx].j
+
+    }
+
+    const elCell = document.querySelector(`[data-i="${rowIdx}"][data-j="${colIdx}"]`)
+
+    elCell.classList.add('hint-back')
+    setTimeout(() => {
+        elCell.classList.remove('hint-back')
+    }, 1000);
+
+    document.querySelector('.safe-cell').classList.add('btn-off')
+    gSaveCell = true
+}
+//---------------------------------------------------------------------//
+
+
+
+
+//--------------------Manually positioned mines----------------------//
+
+function ManualBombPlacement() {
+    if (countManualClicked > 1 || gCounterMoves != 0) return
+
+    document.querySelector(".manual").classList.toggle("btn-toggle")
+    gManualBombPlacement = !gManualBombPlacement
+    countManualClicked++
+
+    if (countManualClicked === 1) {
+        document.querySelector('.span-bomb-left').innerText = 0
+        gBombLeftCounter = 0
+    }
+}
