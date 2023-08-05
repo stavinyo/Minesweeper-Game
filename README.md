@@ -18,7 +18,8 @@ This is my Minesweeper game, built using JavaScript. The game demonstrates my pr
 
 **Extra Lives Feature:** Additional lives in hard and expert levels
 
-*Happy gaming! Link - https://stavinyo.github.io/Minesweeper-Game/*
+*Link - https://stavinyo.github.io/Minesweeper-Game/*
+***Happy gaming!***
 
 
 ![feature](img/2.png)
