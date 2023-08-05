@@ -6,7 +6,7 @@
 MinesweeperX is a JavaScript-based Minesweeper game that demonstrates my full-stack developer abilities. Using a two-dimensional matrix, the game efficiently renders the board and showcases my DOM manipulation skills.
 
 ## Key Features ##
-**Three Difficulty Levels:** Varying board sizes and mine counts.
+**Three Difficulty Levels:** Varying board sizes and mine counts.\n
 **Button Hint Functionality:** Interactive feature revealing neighboring cells.
 **Manual Mode Customization:** User-set mine positions for custom challenges.
 **Best Time Score:** Stores and displays best times locally.
