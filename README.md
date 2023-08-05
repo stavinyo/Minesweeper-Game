@@ -21,7 +21,7 @@ This is my Minesweeper game, built using JavaScript. The game demonstrates my pr
 *Happy gaming!*
 
 
-![feature](img2.png)
+![feature](img/2.png)
 
 ![Winner](img/1.png)
 
