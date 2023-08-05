@@ -76,6 +76,7 @@ function restart() {
     renderLife()
     document.querySelector('.restart').innerText = NORMAL
     document.querySelector('.manual').classList.remove('btn-off')
+    document.querySelector(".manual").classList.remove("btn-toggle")
     document.querySelector('.safe-cell').classList.remove('btn-off')
     document.querySelector('.time .span-time').innerText = '0'
     clearInterval(gTimerIntervalId)
