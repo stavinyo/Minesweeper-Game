@@ -9,9 +9,13 @@ MinesweeperX is a JavaScript-based Minesweeper game that demonstrates my full-st
 **Three Difficulty Levels:** Varying board sizes and mine counts.
 
 **Button Hint Functionality:** Interactive feature revealing neighboring cells.
+
 **Manual Mode Customization:** User-set mine positions for custom challenges.
+
 **Best Time Score:** Stores and displays best times locally.
+
 **Safe Cell Button:** Strategic safe cell revelation and available.
+
 **Extra Lives Feature:** Additional lives in hard and expert levels
 
 *Happy gaming!*
