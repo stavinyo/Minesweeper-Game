@@ -19,3 +19,10 @@ This is my Minesweeper game, built using JavaScript. The game demonstrates my pr
 **Extra Lives Feature:** Additional lives in hard and expert levels
 
 *Happy gaming!*
+
+
+![feature](gif-file/chrome_Z51rFWt72e.gif)
+
+![Winner](gif-file/chrome_Z51rFWt72e.gif)
+
+![GAME OVER](gif-file/chrome_Z51rFWt72e.gif)
