@@ -23,6 +23,6 @@ This is my Minesweeper game, built using JavaScript. The game demonstrates my pr
 
 ![feature](gif-file/chrome_Z51rFWt72e.gif)
 
-![Winner](Img/Screenshot 2023-08-05 211720.png)
+![Winner](Img/Screenshot_2023-08-05_211720.png)
 
 ![GAME OVER](gif-file/chrome_Z51rFWt72e.gif)
