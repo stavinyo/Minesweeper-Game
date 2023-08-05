@@ -21,8 +21,8 @@ This is my Minesweeper game, built using JavaScript. The game demonstrates my pr
 *Happy gaming!*
 
 
-![feature](gif-file/chrome_Z51rFWt72e.gif)
+![feature](img/Screenshot 2023-08-05 211932.png)
 
-![Winner](Img/Screenshot_2023-08-05_211720.png)
+![Winner](img/Screenshot_2023-08-05_211720.png)
 
 ![GAME OVER](gif-file/chrome_Z51rFWt72e.gif)
