@@ -146,6 +146,9 @@ function createRandomBombs(board, gEmptyCellsIndex) {
     }
 }
 
+function getRandomIntInclusive(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min
+}
 
 function onCellClicked(elCell, rowIdx, colIdx) {
     const currCell = gBoard[rowIdx][colIdx]
