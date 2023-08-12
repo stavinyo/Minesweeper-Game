@@ -553,10 +553,12 @@ function showSafeCell() {
 
 //--------------------Manually positioned mines----------------------//
 
+
 function ManualBombPlacement() {
     if (countManualClicked > 1 || gCounterMoves != 0) return
+    changeTitelBtn()
 
-    document.querySelector(".manual").classList.toggle("btn-toggle")
+
     gManualBombPlacement = !gManualBombPlacement
     countManualClicked++
 
@@ -564,4 +566,14 @@ function ManualBombPlacement() {
         document.querySelector('.span-bomb-left').innerText = 0
         gBombLeftCounter = 0
     }
+}
+
+function changeTitelBtn() {
+    document.querySelector(".manual").classList.toggle("btn-toggle")
+
+    if (document.querySelector(".manual").innerText === 'Click !!!') {
+        document.querySelector(".manual").innerText = 'Manual'
+        document.querySelector('.manual').classList.add('btn-off')
+    }
+    else document.querySelector(".manual").innerText = 'Click !!!'
 }
